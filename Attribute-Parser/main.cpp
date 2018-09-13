@@ -6,19 +6,20 @@
 #include <vector>
 
 /** Forward declarations **/
-struct Node;
+class Node;
 
 /** Defines **/
 typedef std::map<std::string, Node*>       Tree;
 typedef std::map<std::string, std::string> Attributes;
 
-struct
+class Node
 {
-  std::string tag;
-  Node*       parent;
-  Tree        children;
-  Attributes  attributes;
-} Node;
+  public:
+    std::string tag;
+    Node*       parent;
+    Tree        children;
+    Attributes  attributes;
+};
 
 /** Static Functions **/
 std::vector<std::string> splitLine(const std::string& line, const char separator);
@@ -54,6 +55,7 @@ Tree
 readXml(size_t lines) // Remember that can be nodes isolates... <tag1></tag1><tag2></tag2>
 {
   Tree root;
+  Node* parent = NULL;
   std::stack<std::string> tags;
 
   for (size_t i = 0; i < lines; ++i)
@@ -68,18 +70,34 @@ readXml(size_t lines) // Remember that can be nodes isolates... <tag1></tag1><ta
     {
       std::cout << "Found a Close tag: " << tags.top() << std::endl;
       tags.pop();
+      parent = parent->parent;
     }
     else
     {
-      if (words.size() == 1)
+      Node*       child   = new Node();
+      std::string tagName = words[0];
+
+      if (tags.empty())
       {
-        std::cout << "Found a Open tag: " << words[0] << std::endl;
-        tags.push(words[0]);
+        child->parent = NULL;
+        root[tagName] = child;
+        parent = child;
       }
       else
       {
-        std::cout << "Found a Open tag: " << words[0] << " with attributes..." <<std::endl;
-        tags.push(words[0]);
+        child->parent = parent;
+
+      }
+
+      tags.push(tagName);
+
+      if (words.size() == 1)
+      {
+        std::cout << "Found a Open tag: " << tagName << std::endl;
+      }
+      else
+      {
+        std::cout << "Found a Open tag: " << tagName << " with attributes..." <<std::endl;
       }
 
     }
