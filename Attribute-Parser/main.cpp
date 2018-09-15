@@ -15,6 +15,14 @@ typedef std::map<std::string, std::string> Attributes;
 class Node
 {
   public:
+
+    Node()
+    : parent(nullptr)
+    {
+    }
+
+  public:
+
     std::string tag;
     Node*       parent;
     Tree        children;
@@ -54,8 +62,8 @@ readSizeT(std::istringstream& stream)
 Tree
 readXml(size_t lines) // Remember that can be nodes isolates... <tag1></tag1><tag2></tag2>
 {
-  Tree root;
-  Node* parent = NULL;
+  Tree  root;
+  Node* parent = nullptr;
   std::stack<std::string> tags;
 
   for (size_t i = 0; i < lines; ++i)
@@ -79,7 +87,8 @@ readXml(size_t lines) // Remember that can be nodes isolates... <tag1></tag1><ta
 
       if (tags.empty())
       {
-        child->parent = NULL;
+        child->parent = nullptr;
+        child->tag    = tagName;
         root[tagName] = child;
         parent = child;
       }
